@@ -1,0 +1,21 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#14405f" />
+      <stop offset="55%" stop-color="#4c9a94" />
+      <stop offset="100%" stop-color="#f4ecdc" />
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#397b76" />
+      <stop offset="100%" stop-color="#0b2740" />
+    </linearGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="60" />
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)" />
+  <circle cx="1180" cy="260" r="140" fill="#d6301f" opacity="0.55" filter="url(#soft)" />
+  <rect y="560" width="1600" height="340" fill="url(#water)" opacity="0.9" />
+  <path d="M0,560 C 300,520 500,600 800,560 C 1100,520 1300,600 1600,560 L1600,900 L0,900 Z" fill="#0b2740" opacity="0.35" />
+  <path d="M0,620 C 260,590 520,650 800,620 C 1080,590 1340,650 1600,620 L1600,900 L0,900 Z" fill="#0b2740" opacity="0.25" />
+</svg>

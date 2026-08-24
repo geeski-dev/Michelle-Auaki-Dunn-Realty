@@ -1,0 +1,12 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder">
+  <defs>
+    <linearGradient id="ogbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b2740" />
+      <stop offset="100%" stop-color="#397b76" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#ogbg)" />
+  <text x="80" y="300" font-family="Georgia, serif" font-size="64" fill="#fbf7ef">Aukai Dunn</text>
+  <text x="80" y="360" font-family="Arial, sans-serif" font-size="28" fill="#f4ecdc">REALTOR® · Keller Williams South Shore</text>
+  <text x="80" y="400" font-family="Arial, sans-serif" font-size="24" fill="#d6301f">South Shore Real Estate Without the Sales Pitch</text>
+</svg>
