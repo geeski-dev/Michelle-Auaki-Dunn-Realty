@@ -102,11 +102,21 @@ are hers to use pending a final legal check before launch (see `ASSETS.md`).
 
 ## Technical notes
 
-- **`api/contact.py` hasn't been runtime-tested.** This dev environment
-  didn't have `pip`/`venv` available, so the endpoint was reviewed and
-  compiles cleanly (`python3 -m py_compile`), but the actual pydantic
-  validation and request handling haven't been exercised end-to-end. Test it
-  with `vercel dev` before launch.
+- **The project moved from Vercel to Cloudflare Pages.** The real, deployed
+  contact-form backend is now `functions/api/contact.ts` (a Cloudflare Pages
+  Function), not `api/contact.py`. Cloudflare Pages Functions only run
+  JavaScript/TypeScript — Python isn't supported there — so `api/contact.py`
+  is kept in the repo purely as a reference in case this ever moves back to
+  Vercel, but it is not what actually runs in production. Its validation
+  logic has never been runtime-tested (this dev environment had no
+  `pip`/`venv`), while `functions/api/contact.ts`'s equivalent logic does
+  have a Vitest suite (`functions/api/contact.test.ts`).
+- **`functions/api/contact.ts`'s in-memory rate limit is weaker than a typical
+  server's.** Cloudflare Workers isolates are created and destroyed per
+  request across a globally distributed edge network, so the in-memory map
+  it uses often won't persist between two requests from the same visitor.
+  Fine as a phase-1 stopgap; a durable store (Cloudflare KV or Durable
+  Objects) would be needed for a real guarantee.
 - **TypeScript is pinned to `~6.0.2`**, not the newest `7.0.2` release, matching
   what the current `create-vite` React+TS template ships by default. Not a
   business decision — just noting it in case a future bump is wanted.

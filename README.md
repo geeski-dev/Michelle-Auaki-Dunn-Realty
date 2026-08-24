@@ -9,11 +9,11 @@ no CMS, no database, no auth.
 - Vite 8 + React 19 + TypeScript 7 (strict)
 - Tailwind CSS 4 (CSS-first config, no `tailwind.config.js`)
 - Vitest + Testing Library
-- Python serverless function (`api/contact.py`) for the contact form, deployed on Vercel
+- Cloudflare Pages Function (`functions/api/contact.ts`) for the contact form, deployed on Cloudflare Pages
 
 ## Getting started
 
-Requires Node 24 (see `.nvmrc`) and Python 3.12+.
+Requires Node 24 (see `.nvmrc`).
 
 ```bash
 nvm use
@@ -33,13 +33,31 @@ npm run preview        # serve the production build locally
 
 ### Contact API locally
 
-`api/contact.py` is a Vercel Function (file-based, `BaseHTTPRequestHandler`
-style — see [Vercel's Python runtime docs](https://vercel.com/docs/functions/runtimes/python)).
-It isn't served by `vite dev`. To exercise it locally, install the Vercel CLI
-and run `vercel dev`, or install `api/requirements.txt` into a venv and hit
-the handler directly. This repo's sandbox didn't have `pip`/`venv` available,
-so the endpoint has been reviewed but not runtime-executed — test it with
-`vercel dev` before launch.
+`functions/api/contact.ts` is a Cloudflare Pages Function — see
+[Cloudflare's Pages Functions docs](https://developers.cloudflare.com/pages/functions/).
+It isn't served by plain `vite dev`. To exercise it locally with the same
+runtime Cloudflare deploys to, use Wrangler alongside Vite (two terminals):
+
+```bash
+# terminal 1
+npm run dev                       # Vite on http://localhost:5173
+
+# terminal 2
+npx wrangler pages dev --proxy 5173
+```
+
+Wrangler proxies the Vite dev server for everything except `/api/*`, which it
+serves from `functions/` using the real Workers runtime — matching
+production. The validation logic itself (honeypot,
+field checks) has a Vitest suite in `functions/api/contact.test.ts` that
+runs with the rest of `npm run test` — no Wrangler needed for that part.
+
+`api/contact.py` is kept for reference (see "Deploying to Cloudflare Pages"
+above for why) and targets Vercel's Python runtime instead — see
+[Vercel's Python runtime docs](https://vercel.com/docs/functions/runtimes/python)
+if this project ever moves back there. It isn't served locally by either
+`vite dev` or Wrangler; use `vercel dev`, or install `api/requirements.txt`
+into a venv and hit the handler directly:
 
 ```bash
 python3 -m venv .venv
@@ -51,18 +69,29 @@ If the `/api/contact` request fails (network error or non-2xx), the form
 falls back to showing the team's phone number, and a `mailto:` link once an
 email address is confirmed (see `OPEN-QUESTIONS.md`).
 
-## Deploying to Vercel
+## Deploying to Cloudflare Pages
+
+The project deploys to Cloudflare Pages, connected directly to the GitHub repo:
 
 1. Push this repo to GitHub.
-2. Import it in Vercel. It auto-detects the Vite build (`npm run build` →
-   `dist/`) and the Python function in `api/`.
-3. No environment variables are required for Phase 1 (see `.env.example`).
+2. In the Cloudflare Pages dashboard, connect the repo and set:
+   - Build command: `npm run build`
+   - Build output directory: `dist`
+   - Environment variable `NODE_VERSION` = `24` (set it under **both**
+     Production and Preview — Cloudflare Pages treats those as separate
+     environments and won't share the value otherwise)
+3. No other environment variables are required for Phase 1 (see `.env.example`).
 4. Add a custom domain once one is confirmed, and update every
    `TODO-CONFIRM-DOMAIN.example` placeholder in `index.html`,
    `public/robots.txt`, and `public/sitemap.xml` first.
 
-If Vercel's Python runtime ever causes friction, Cloudflare Pages is the
-fallback — see CLAUDE.md §4. That switch hasn't been needed.
+Cloudflare Pages Functions only run JavaScript/TypeScript — there's no Python
+runtime there. `api/contact.py` (the original Vercel-targeted version) is
+kept in the repo for reference but is **not** what's actually deployed;
+`functions/api/contact.ts` is the real, currently-deployed backend for the
+contact form. If this project ever moves back to Vercel, the Python version
+is still there and up to date with the same validation/honeypot/rate-limit
+logic.
 
 ## Changing content
 
